@@ -39,7 +39,7 @@ Once installed, the plugin automatically monitors your Java files:
 
 ## Requirements
 
-- IntelliJ IDEA 2024.1 or later (Community or Ultimate)
+- IntelliJ IDEA 2023.1 or later (Community or Ultimate)
 - Java plugin enabled
 
 ## Building from Source

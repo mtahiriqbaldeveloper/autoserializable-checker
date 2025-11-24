@@ -18,7 +18,7 @@
     ]]></change-notes>
 
     <!-- Please see https://plugins.jetbrains.com/docs/intellij/build-number-ranges.html for description -->
-    <idea-version since-build="233"/>
+    <idea-version since-build="231" until-build="243.*"/>
 
     <!-- Depends on Java plugin -->
     <depends>com.intellij.modules.java</depends>
