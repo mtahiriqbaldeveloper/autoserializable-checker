@@ -11,15 +11,30 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.psi.*;
+import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Optimized file listener that monitors Java files for @Autoserializable usage.
+ * Performance improvements:
+ * - Debouncing to avoid processing rapid consecutive changes
+ * - Text-based pre-filtering before expensive PSI operations
+ * - Uses cached utility for autoserializable checks
+ * - Respects user settings for enabling/disabling notifications
+ */
 public class AutoserializableFileListener implements BulkFileListener {
     private final Project project;
     private final ConcurrentHashMap<String, Long> notificationCache = new ConcurrentHashMap<>();
-    private static final long NOTIFICATION_COOLDOWN = 5000; // 5 seconds
+    private final ConcurrentHashMap<String, Long> lastChangeTime = new ConcurrentHashMap<>();
+    private final Alarm alarm = new Alarm();
+    private final Set<String> pendingFiles = new HashSet<>();
+    
+    private static final int DEBOUNCE_DELAY = 1000; // 1 second debounce
 
     public AutoserializableFileListener(Project project) {
         this.project = project;
@@ -27,16 +42,54 @@ public class AutoserializableFileListener implements BulkFileListener {
 
     @Override
     public void after(@NotNull List<? extends VFileEvent> events) {
+        AutoserializableSettingsState settings = AutoserializableSettingsState.getInstance();
+        if (settings == null || !settings.isNotificationsEnabled()) {
+            return; // Skip if settings not initialized or notifications disabled
+        }
+        
         for (VFileEvent event : events) {
             if (event instanceof VFileContentChangeEvent) {
                 VFileContentChangeEvent changeEvent = (VFileContentChangeEvent) event;
 
                 // Only process Java files
                 if (changeEvent.getFile().getName().endsWith(".java")) {
-                    checkForAutoserializable(changeEvent);
+                    scheduleCheck(changeEvent);
                 }
             }
         }
+    }
+
+    /**
+     * Debounces file checks to avoid processing rapid consecutive changes.
+     * This significantly reduces overhead during active typing.
+     */
+    private void scheduleCheck(VFileContentChangeEvent event) {
+        String filePath = event.getFile().getPath();
+        long currentTime = System.currentTimeMillis();
+        
+        lastChangeTime.put(filePath, currentTime);
+        
+        synchronized (pendingFiles) {
+            if (pendingFiles.contains(filePath)) {
+                return; // Already scheduled
+            }
+            pendingFiles.add(filePath);
+        }
+        
+        // Debounce: wait for typing to stop before checking
+        alarm.addRequest(() -> {
+            synchronized (pendingFiles) {
+                pendingFiles.remove(filePath);
+            }
+            
+            Long lastChange = lastChangeTime.get(filePath);
+            if (lastChange != null && (currentTime - lastChange) < DEBOUNCE_DELAY) {
+                // Still typing, skip this check
+                return;
+            }
+            
+            checkForAutoserializable(event);
+        }, DEBOUNCE_DELAY);
     }
 
     private void checkForAutoserializable(VFileContentChangeEvent event) {
@@ -45,61 +98,37 @@ public class AutoserializableFileListener implements BulkFileListener {
         // Throttle notifications per file
         Long lastNotification = notificationCache.get(filePath);
         long currentTime = System.currentTimeMillis();
-        if (lastNotification != null && (currentTime - lastNotification) < NOTIFICATION_COOLDOWN) {
+        
+        AutoserializableSettingsState settings = AutoserializableSettingsState.getInstance();
+        long cooldown = (settings != null) ? settings.getCooldownMs() : 10000L;
+        
+        if (lastNotification != null && (currentTime - lastNotification) < cooldown) {
             return;
         }
 
         ApplicationManager.getApplication().runReadAction(() -> {
             PsiFile psiFile = PsiManager.getInstance(project).findFile(event.getFile());
 
-            if (psiFile instanceof PsiJavaFile) {
-                PsiJavaFile javaFile = (PsiJavaFile) psiFile;
+            if (!(psiFile instanceof PsiJavaFile)) {
+                return;
+            }
+            
+            PsiJavaFile javaFile = (PsiJavaFile) psiFile;
+            
+            // Fast pre-check: does the file even contain "Autoserializable" text?
+            if (!AutoserializableUtil.mightContainAutoserializable(javaFile)) {
+                return; // Skip expensive PSI analysis
+            }
 
-                for (PsiClass psiClass : javaFile.getClasses()) {
-                    if (isAutoserializable(psiClass)) {
-                        notificationCache.put(filePath, currentTime);
-                        showNotification(event.getFile().getName(), psiClass.getName());
-                        break;
-                    }
+            // Now do the full check with caching
+            for (PsiClass psiClass : javaFile.getClasses()) {
+                if (AutoserializableUtil.isAutoserializable(psiClass)) {
+                    notificationCache.put(filePath, currentTime);
+                    showNotification(event.getFile().getName(), psiClass.getName());
+                    break; // Only notify once per file save
                 }
             }
         });
-    }
-
-    private boolean isAutoserializable(PsiClass psiClass) {
-        // Check for @Autoserializable annotation
-        PsiModifierList modifierList = psiClass.getModifierList();
-        if (modifierList != null) {
-            PsiAnnotation annotation = modifierList.findAnnotation("Autoserializable");
-            if (annotation != null) {
-                return true;
-            }
-
-            // Check fully qualified annotation
-            annotation = modifierList.findAnnotation("com.yourcompany.Autoserializable");
-            if (annotation != null) {
-                return true;
-            }
-        }
-
-        // Check if implements Autoserializable
-        PsiReferenceList implementsList = psiClass.getImplementsList();
-        if (implementsList != null) {
-            for (PsiJavaCodeReferenceElement ref : implementsList.getReferenceElements()) {
-                String name = ref.getQualifiedName();
-                if (name != null && name.contains("Autoserializable")) {
-                    return true;
-                }
-            }
-        }
-
-        // Check superclass recursively
-        PsiClass superClass = psiClass.getSuperClass();
-        if (superClass != null && !superClass.getQualifiedName().equals("java.lang.Object")) {
-            return isAutoserializable(superClass);
-        }
-
-        return false;
     }
 
     private void showNotification(String fileName, String className) {

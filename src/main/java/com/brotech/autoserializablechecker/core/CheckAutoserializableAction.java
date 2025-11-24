@@ -7,7 +7,6 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +36,16 @@ public class CheckAutoserializableAction extends AnAction {
         com.intellij.openapi.application.ApplicationManager.getApplication().runReadAction(() -> {
             try {
                 PsiJavaFile javaFile = (PsiJavaFile) psiFile;
+                
+                // Fast pre-check before expensive PSI analysis
+                if (!AutoserializableUtil.mightContainAutoserializable(javaFile)) {
+                    showNotification(project, "✓ Analysis Complete", 
+                        String.format("File <b>%s</b> does not contain any @Autoserializable classes.", 
+                            psiFile.getName()),
+                        NotificationType.INFORMATION);
+                    return;
+                }
+                
                 List<String> autoserializableClasses = new ArrayList<>();
                 
                 // Analyze all classes in the file
@@ -91,42 +100,8 @@ public class CheckAutoserializableAction extends AnAction {
     }
 
     private boolean isAutoserializable(PsiClass psiClass) {
-        // Check for @Autoserializable annotation
-        PsiModifierList modifierList = psiClass.getModifierList();
-        if (modifierList != null) {
-            PsiAnnotation annotation = modifierList.findAnnotation("Autoserializable");
-            if (annotation != null) {
-                return true;
-            }
-
-            // Check fully qualified annotation
-            annotation = modifierList.findAnnotation("com.yourcompany.Autoserializable");
-            if (annotation != null) {
-                return true;
-            }
-        }
-
-        // Check if implements Autoserializable
-        PsiReferenceList implementsList = psiClass.getImplementsList();
-        if (implementsList != null) {
-            for (PsiJavaCodeReferenceElement ref : implementsList.getReferenceElements()) {
-                String name = ref.getQualifiedName();
-                if (name != null && name.contains("Autoserializable")) {
-                    return true;
-                }
-            }
-        }
-
-        // Check superclass recursively
-        PsiClass superClass = psiClass.getSuperClass();
-        if (superClass != null) {
-            String qualifiedName = superClass.getQualifiedName();
-            if (qualifiedName != null && !qualifiedName.equals("java.lang.Object")) {
-                return isAutoserializable(superClass);
-            }
-        }
-
-        return false;
+        // Use optimized cached utility
+        return AutoserializableUtil.isAutoserializable(psiClass);
     }
 
     private void showNotification(Project project, String title, String content, NotificationType type) {

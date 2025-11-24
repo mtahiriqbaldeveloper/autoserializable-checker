@@ -6,6 +6,9 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Optimized inspection that uses cached checks for @Autoserializable detection.
+ */
 public class AutoserializableInspection extends AbstractBaseJavaLocalInspectionTool {
 
     @NotNull
@@ -16,7 +19,8 @@ public class AutoserializableInspection extends AbstractBaseJavaLocalInspectionT
             public void visitClass(PsiClass aClass) {
                 super.visitClass(aClass);
 
-                if (isAutoserializable(aClass)) {
+                // Use cached utility - much faster on repeated inspections
+                if (AutoserializableUtil.isAutoserializable(aClass)) {
                     PsiIdentifier nameIdentifier = aClass.getNameIdentifier();
                     if (nameIdentifier != null) {
                         holder.registerProblem(
@@ -28,27 +32,5 @@ public class AutoserializableInspection extends AbstractBaseJavaLocalInspectionT
                 }
             }
         };
-    }
-
-    private boolean isAutoserializable(PsiClass psiClass) {
-        PsiModifierList modifierList = psiClass.getModifierList();
-        if (modifierList != null) {
-            if (modifierList.findAnnotation("Autoserializable") != null ||
-                    modifierList.findAnnotation("com.yourcompany.Autoserializable") != null) {
-                return true;
-            }
-        }
-
-        PsiReferenceList implementsList = psiClass.getImplementsList();
-        if (implementsList != null) {
-            for (PsiJavaCodeReferenceElement ref : implementsList.getReferenceElements()) {
-                String name = ref.getQualifiedName();
-                if (name != null && name.contains("Autoserializable")) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 }
