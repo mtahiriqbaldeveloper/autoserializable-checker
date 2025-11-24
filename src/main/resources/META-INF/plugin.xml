@@ -45,15 +45,23 @@
 
     </extensions>
 
-
-    <!-- Uncomment when CheckAutoserializableAction is implemented
     <actions>
+        <!-- Right-click menu action -->
         <action id="CheckAutoserializable"
                 class="com.brotech.autoserializablechecker.core.CheckAutoserializableAction"
                 text="Check Autoserializable"
-                description="Check current file for Autoserializable usage">
+                description="Analyze current file for Autoserializable usage"
+                icon="AllIcons.General.InspectionsEye">
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
         </action>
+        
+        <!-- Tools menu action -->
+        <action id="CheckAutoserializableToolsMenu"
+                class="com.brotech.autoserializablechecker.core.CheckAutoserializableAction"
+                text="Analyze Autoserializable Classes"
+                description="Analyze current file for Autoserializable usage"
+                icon="AllIcons.General.InspectionsEye">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
     </actions>
-    -->
 </idea-plugin>
