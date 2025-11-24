@@ -1,0 +1,59 @@
+<idea-plugin>
+    <id>com.brotech.autoserializable-checker</id>
+    <name>Autoserializable Checker</name>
+    <vendor email="support@brotech.com" url="https://brotech.com">brotech</vendor>
+
+    <description><![CDATA[
+    Monitors changes to Java files containing @Autoserializable annotation or implementing Autoserializable interface.
+    Displays warnings when such files are modified to ensure serialization compatibility.
+    ]]></description>
+
+    <change-notes><![CDATA[
+    <h3>1.0.0</h3>
+    <ul>
+        <li>Initial release</li>
+        <li>Real-time file modification detection</li>
+        <li>Warning notifications for @Autoserializable changes</li>
+    </ul>
+    ]]></change-notes>
+
+    <!-- Please see https://plugins.jetbrains.com/docs/intellij/build-number-ranges.html for description -->
+    <idea-version since-build="233"/>
+
+    <!-- Depends on Java plugin -->
+    <depends>com.intellij.modules.java</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Register notification group -->
+        <notificationGroup id="Autoserializable Warnings"
+                           displayType="BALLOON"
+                           isLogByDefault="true"/>
+
+        <!-- Register startup activity -->
+        <postStartupActivity implementation="com.brotech.autoserializablechecker.core.AutoserializableStartupActivity"/>
+
+        <!-- Register inspection -->
+        <localInspection language="JAVA"
+                         shortName="AutoserializableModification"
+                         displayName="Autoserializable class modification"
+                         groupName="Serialization"
+                         enabledByDefault="true"
+                         level="WARNING"
+                         implementationClass="com.brotech.autoserializablechecker.core.AutoserializableInspection"/>
+        <projectConfigurable instance="com.brotech.autoserializablechecker.core.AutoserializableSettings"
+                             displayName="serialization-checker"/>
+
+    </extensions>
+
+
+    <!-- Uncomment when CheckAutoserializableAction is implemented
+    <actions>
+        <action id="CheckAutoserializable"
+                class="com.brotech.autoserializablechecker.core.CheckAutoserializableAction"
+                text="Check Autoserializable"
+                description="Check current file for Autoserializable usage">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </action>
+    </actions>
+    -->
+</idea-plugin>
