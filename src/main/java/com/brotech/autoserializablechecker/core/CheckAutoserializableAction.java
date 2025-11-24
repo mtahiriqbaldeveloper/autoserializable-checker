@@ -72,12 +72,10 @@ public class CheckAutoserializableAction extends AnAction {
 
     @Override
     public void update(@NotNull AnActionEvent e) {
-        // Enable/disable action based on whether a Java file is open
+        // Always enable if project is available - we'll handle the check in actionPerformed
         Project project = e.getProject();
-        PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
-        
-        boolean enabled = project != null && psiFile instanceof PsiJavaFile;
-        e.getPresentation().setEnabled(enabled);
+        e.getPresentation().setEnabled(project != null);
+        e.getPresentation().setVisible(true);
     }
 
     private boolean isAutoserializable(PsiClass psiClass) {
