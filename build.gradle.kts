@@ -32,7 +32,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("231") // Support from 2023.1
-        // No untilBuild set - supports all future versions
+        untilBuild.set("") // Empty string means no upper limit - supports all future versions
     }
 
     signPlugin {
