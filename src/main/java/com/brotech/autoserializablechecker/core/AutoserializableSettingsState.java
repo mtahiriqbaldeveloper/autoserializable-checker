@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Persistent settings state for the Autoserializable Checker plugin.
+ * Persistent settings state for the AutoSerializable Checker plugin.
  * 
  * Performance Note: Real-time notifications are DISABLED by default to avoid
  * unnecessary processing on every file change. Users should use:

@@ -7,7 +7,7 @@ import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Optimized inspection that uses cached checks for @Autoserializable detection.
+ * Optimized inspection that uses cached checks for @AutoSerializable detection.
  */
 public class AutoserializableInspection extends AbstractBaseJavaLocalInspectionTool {
 
@@ -25,7 +25,7 @@ public class AutoserializableInspection extends AbstractBaseJavaLocalInspectionT
                     if (nameIdentifier != null) {
                         holder.registerProblem(
                                 nameIdentifier,
-                                "This class uses @Autoserializable. Be careful when modifying to maintain serialization compatibility.",
+                                "This class uses @AutoSerializable. Be careful when modifying to maintain serialization compatibility.",
                                 com.intellij.codeInspection.ProblemHighlightType.WARNING
                         );
                     }

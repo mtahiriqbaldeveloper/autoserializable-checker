@@ -27,7 +27,7 @@ public class CheckAutoserializableAction extends AnAction {
 
         if (psiFile == null || !(psiFile instanceof PsiJavaFile)) {
             showNotification(project, "Not a Java File", 
-                "Please open a Java file to analyze for @Autoserializable usage.", 
+                "Please open a Java file to analyze for @AutoSerializable usage.", 
                 NotificationType.WARNING);
             return;
         }
@@ -40,7 +40,7 @@ public class CheckAutoserializableAction extends AnAction {
                 // Fast pre-check before expensive PSI analysis
                 if (!AutoserializableUtil.mightContainAutoserializable(javaFile)) {
                     showNotification(project, "✓ Analysis Complete", 
-                        String.format("File <b>%s</b> does not contain any @Autoserializable classes.", 
+                        String.format("File <b>%s</b> does not contain any @AutoSerializable classes.", 
                             psiFile.getName()),
                         NotificationType.INFORMATION);
                     return;
@@ -62,13 +62,13 @@ public class CheckAutoserializableAction extends AnAction {
                 String fileName = psiFile.getName();
                 if (autoserializableClasses.isEmpty()) {
                     showNotification(project, "✓ Analysis Complete", 
-                        String.format("File <b>%s</b> does not contain any @Autoserializable classes.", 
+                        String.format("File <b>%s</b> does not contain any @AutoSerializable classes.", 
                             fileName),
                         NotificationType.INFORMATION);
                 } else {
                     StringBuilder message = new StringBuilder();
                     message.append("File <b>").append(fileName).append("</b> contains ")
-                           .append(autoserializableClasses.size()).append(" @Autoserializable class(es):<br/>");
+                           .append(autoserializableClasses.size()).append(" @AutoSerializable class(es):<br/>");
                     
                     for (String className : autoserializableClasses) {
                         message.append("• <b>").append(className).append("</b><br/>");
@@ -79,7 +79,7 @@ public class CheckAutoserializableAction extends AnAction {
                            .append("• Update SerialVersionUID if needed<br/>")
                            .append("• Document all changes");
                     
-                    showNotification(project, "⚠️ Autoserializable Classes Found", 
+                    showNotification(project, "⚠️ AutoSerializable Classes Found", 
                         message.toString(), 
                         NotificationType.WARNING);
                 }

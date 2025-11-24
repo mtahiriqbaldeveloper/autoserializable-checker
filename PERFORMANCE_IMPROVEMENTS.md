@@ -11,9 +11,9 @@ This document details the comprehensive performance improvements made to the Aut
 - ❌ **Old way:** Plugin checked EVERY Java file change automatically → unnecessary overhead
 - ✅ **New way:** Users check files when they want to → zero overhead until needed
 
-### How Users Check for @Autoserializable:
+### How Users Check for @AutoSerializable:
 1. **📋 Code Inspection (Recommended)** - Automatic during normal IDE code analysis
-2. **🖱️ Manual Action** - Right-click → "Check for @Autoserializable" when needed  
+2. **🖱️ Manual Action** - Right-click → "Check for @AutoSerializable" when needed  
 3. **🔔 Real-time Notifications** - Optional, can be enabled in settings (not recommended for performance)
 
 This user-suggested optimization eliminated 99% of unnecessary processing!
@@ -183,7 +183,7 @@ This user-suggested optimization eliminated 99% of unnecessary processing!
 ## Testing Recommendations
 
 1. **Manual Testing:**
-   - Type rapidly in a Java file with @Autoserializable
+   - Type rapidly in a Java file with @AutoSerializable
    - Verify notifications only appear after stopping typing
    - Open Settings → Autoserializable Checker
    - Toggle notifications on/off
@@ -195,7 +195,7 @@ This user-suggested optimization eliminated 99% of unnecessary processing!
    - Should see significantly reduced spikes
 
 3. **Functional Testing:**
-   - Verify inspection still detects @Autoserializable classes
+   - Verify inspection still detects @AutoSerializable classes
    - Verify manual action still works
    - Verify notifications appear for actual changes
 

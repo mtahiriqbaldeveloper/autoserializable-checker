@@ -4,7 +4,7 @@
     <vendor email="support@brotech.com" url="https://brotech.com">brotech</vendor>
 
     <description><![CDATA[
-    Monitors changes to Java files containing @Autoserializable annotation or implementing Autoserializable interface.
+    Monitors changes to Java files containing @AutoSerializable annotation or implementing AutoSerializable interface.
     Displays warnings when such files are modified to ensure serialization compatibility.
     ]]></description>
 
@@ -13,7 +13,7 @@
     <ul>
         <li>Initial release</li>
         <li>Real-time file modification detection</li>
-        <li>Warning notifications for @Autoserializable changes</li>
+        <li>Warning notifications for @AutoSerializable changes</li>
     </ul>
     ]]></change-notes>
 
@@ -35,7 +35,7 @@
         <!-- Register inspection -->
         <localInspection language="JAVA"
                          shortName="AutoserializableModification"
-                         displayName="Autoserializable class modification"
+                         displayName="AutoSerializable class modification"
                          groupName="Serialization"
                          enabledByDefault="true"
                          level="WARNING"
@@ -49,16 +49,16 @@
         <!-- Right-click menu action -->
         <action id="CheckAutoserializable"
                 class="com.brotech.autoserializablechecker.core.CheckAutoserializableAction"
-                text="Check Autoserializable"
-                description="Analyze current file for Autoserializable usage">
+                text="Check for @AutoSerializable"
+                description="Analyze current file for @AutoSerializable usage">
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
         </action>
         
         <!-- Tools menu action -->
         <action id="CheckAutoserializableToolsMenu"
                 class="com.brotech.autoserializablechecker.core.CheckAutoserializableAction"
-                text="Analyze Autoserializable Classes"
-                description="Analyze current file for Autoserializable usage">
+                text="Analyze AutoSerializable Classes"
+                description="Analyze current file for @AutoSerializable usage">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
         </action>
     </actions>

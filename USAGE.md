@@ -1,8 +1,8 @@
 # Autoserializable Checker - Usage Guide
 
-## How to Check for @Autoserializable Classes
+## How to Check for @AutoSerializable Classes
 
-The plugin provides **three ways** to check for autoserializable classes. Choose the method that fits your workflow:
+The plugin provides **three ways** to check for AutoSerializable classes. Choose the method that fits your workflow:
 
 ---
 
@@ -19,7 +19,7 @@ The plugin provides **three ways** to check for autoserializable classes. Choose
 
 **What you'll see:**
 ```
-⚠️ This class uses @Autoserializable. Be careful when modifying 
+⚠️ This class uses @AutoSerializable. Be careful when modifying 
    to maintain serialization compatibility.
 ```
 
@@ -32,7 +32,7 @@ The plugin provides **three ways** to check for autoserializable classes. Choose
 **How to use:**
 1. Open any Java file
 2. Right-click anywhere in the editor
-3. Select **"Check for @Autoserializable"** from the menu
+3. Select **"Check for @AutoSerializable"** from the menu
 4. View results in a notification balloon
 
 **When to use:**
@@ -43,14 +43,14 @@ The plugin provides **three ways** to check for autoserializable classes. Choose
 **Example output:**
 ```
 ✓ Analysis Complete
-File MyClass.java does not contain any @Autoserializable classes.
+File MyClass.java does not contain any @AutoSerializable classes.
 ```
 
 or
 
 ```
-⚠️ Autoserializable Classes Found
-File MyModel.java contains 2 @Autoserializable class(es):
+⚠️ AutoSerializable Classes Found
+File MyModel.java contains 2 @AutoSerializable class(es):
 • User
 • UserProfile
 
@@ -75,12 +75,12 @@ File MyModel.java contains 2 @Autoserializable class(es):
 4. Click **Apply**
 
 **How it works:**
-- Shows notification popup when you modify files containing @Autoserializable
+- Shows notification popup when you modify files containing @AutoSerializable
 - Includes 1-second debounce to avoid spam during typing
 - Cooldown period prevents repeated notifications
 
 **When notifications appear:**
-- After you save a file with @Autoserializable classes
+- After you save a file with @AutoSerializable classes
 - Only if changes were made (not on every save)
 - Respects cooldown period between notifications
 
@@ -110,7 +110,7 @@ File MyModel.java contains 2 @Autoserializable class(es):
 
 ### For Code Reviews:
 1. Run **Manual Action** on files you're reviewing
-2. Check for @Autoserializable before approving changes
+2. Check for @AutoSerializable before approving changes
 3. Verify SerialVersionUID updates
 
 ---
@@ -134,7 +134,7 @@ Access plugin settings:
 ## Troubleshooting
 
 ### "I'm not seeing any warnings"
-- Make sure your classes actually use `@Autoserializable` annotation
+- Make sure your classes actually use `@AutoSerializable` annotation
 - Check that Code Inspections are enabled: **Settings** → **Editor** → **Inspections**
 - Look for "Autoserializable" in the inspection settings
 
@@ -154,17 +154,17 @@ Access plugin settings:
 
 ### Example 1: Simple Check
 ```java
-@Autoserializable
+@AutoSerializable
 public class User {
     private String name;
     private int age;
 }
 ```
-**Result:** Warning appears in editor, Manual Action confirms 1 autoserializable class
+**Result:** Warning appears in editor, Manual Action confirms 1 AutoSerializable class
 
 ### Example 2: Inheritance
 ```java
-@Autoserializable
+@AutoSerializable
 public class BaseModel { }
 
 public class UserModel extends BaseModel {  // Also detected!
@@ -175,7 +175,7 @@ public class UserModel extends BaseModel {  // Also detected!
 
 ### Example 3: Interface Implementation
 ```java
-public class DataObject implements Autoserializable {
+public class DataObject implements AutoSerializable {
     private byte[] data;
 }
 ```
@@ -185,7 +185,7 @@ public class DataObject implements Autoserializable {
 
 ## Best Practices
 
-1. ✅ **Check before modifying** - Run Manual Action before editing unfamiliar @Autoserializable classes
+1. ✅ **Check before modifying** - Run Manual Action before editing unfamiliar @AutoSerializable classes
 2. ✅ **Update SerialVersionUID** - When making incompatible changes
 3. ✅ **Document changes** - Maintain compatibility notes
 4. ✅ **Use Code Inspection** - Let IDE warn you automatically

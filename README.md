@@ -5,7 +5,7 @@
 ![Platform](https://img.shields.io/badge/platform-IntelliJ%20IDEA-orange)
 ![Performance](https://img.shields.io/badge/performance-optimized-success)
 
-A high-performance IntelliJ IDEA plugin that helps developers safely modify Java files containing `@Autoserializable` annotation or implementing `Autoserializable` interface. Provides multiple checking methods to ensure serialization compatibility.
+A high-performance IntelliJ IDEA plugin that helps developers safely modify Java files containing `@AutoSerializable` annotation or implementing `AutoSerializable` interface. Provides multiple checking methods to ensure serialization compatibility.
 
 ## Features
 
@@ -33,7 +33,7 @@ A high-performance IntelliJ IDEA plugin that helps developers safely modify Java
 
 ## Usage
 
-The plugin offers **three ways** to check for autoserializable classes:
+The plugin offers **three ways** to check for AutoSerializable classes:
 
 ### 1. Code Inspection (Recommended ✅)
 - Runs automatically as part of IntelliJ's code inspection
@@ -43,14 +43,14 @@ The plugin offers **three ways** to check for autoserializable classes:
 
 ### 2. Manual Action (On-Demand 🖱️)
 1. Open any Java file
-2. Right-click → **"Check for @Autoserializable"**
+2. Right-click → **"Check for @AutoSerializable"**
 3. View instant results in notification
 - Zero performance impact when not used
 - Perfect for code reviews
 
 ### 3. Real-time Notifications (Optional 🔔)
 - Enable in: `Settings` → `Tools` → `Autoserializable Checker`
-- Shows notifications when you modify @Autoserializable files
+- Shows notifications when you modify @AutoSerializable files
 - **Disabled by default** for best performance
 - Only enable if your workflow requires it
 
@@ -141,7 +141,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ### Version 1.0.0
 - ✨ Initial release
 - ✨ Real-time file modification detection
-- ✨ Warning notifications for @Autoserializable changes
+- ✨ Warning notifications for @AutoSerializable changes
 - ✨ Code inspection for serialization issues
 - ✨ Configurable settings
 

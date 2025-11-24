@@ -38,7 +38,7 @@ public class AutoserializableSettings implements Configurable {
                 "<html><body style='width: 400px'>" +
                 "<b>Recommended:</b> Keep disabled for best performance.<br/><br/>" +
                 "<b>Available check methods:</b><br/>" +
-                "• <b>Manual Action:</b> Right-click → Check for @Autoserializable (always available)<br/>" +
+                "• <b>Manual Action:</b> Right-click → Check for @AutoSerializable (always available)<br/>" +
                 "• <b>Code Inspection:</b> Automatic warnings during normal IDE analysis (always enabled)<br/>" +
                 "• <b>Real-time notifications:</b> Shows notification on every file save (enable below if needed)<br/>" +
                 "</body></html>"

@@ -20,11 +20,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Optimized file listener that monitors Java files for @Autoserializable usage.
+ * Optimized file listener that monitors Java files for @AutoSerializable usage.
  * Performance improvements:
  * - Debouncing to avoid processing rapid consecutive changes
  * - Text-based pre-filtering before expensive PSI operations
- * - Uses cached utility for autoserializable checks
+ * - Uses cached utility for AutoSerializable checks
  * - Respects user settings for enabling/disabling notifications
  */
 public class AutoserializableFileListener implements BulkFileListener {
@@ -137,7 +137,7 @@ public class AutoserializableFileListener implements BulkFileListener {
                 .createNotification(
                         "⚠️ Serialization Warning",
                         String.format(
-                                "You modified <b>%s</b> (class: %s) which uses @Autoserializable.<br/>" +
+                                "You modified <b>%s</b> (class: %s) which uses @AutoSerializable.<br/>" +
                                         "Please ensure:<br/>" +
                                         "• Backward compatibility is maintained<br/>" +
                                         "• SerialVersionUID is updated if needed<br/>" +

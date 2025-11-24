@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 /**
- * Centralized utility for checking if a class uses @Autoserializable.
+ * Centralized utility for checking if a class uses @AutoSerializable.
  * Uses IntelliJ's caching mechanism to avoid repeated expensive checks.
  */
 public class AutoserializableUtil {
@@ -23,7 +23,7 @@ public class AutoserializableUtil {
     private static final int MAX_SUPERCLASS_DEPTH = 10; // Prevent infinite loops
     
     /**
-     * Checks if a class uses @Autoserializable annotation or interface.
+     * Checks if a class uses @AutoSerializable annotation or interface.
      * Results are cached and invalidated when PSI changes.
      */
     public static boolean isAutoserializable(@NotNull PsiClass psiClass) {
@@ -101,13 +101,13 @@ public class AutoserializableUtil {
     }
     
     /**
-     * Quick check if a file might contain autoserializable classes.
+     * Quick check if a file might contain AutoSerializable classes.
      * This is a fast pre-check before doing full PSI analysis.
      */
     public static boolean mightContainAutoserializable(@NotNull PsiJavaFile javaFile) {
         // Quick text-based pre-check (much faster than PSI parsing)
         String text = javaFile.getText();
-        return text.contains("Autoserializable") || text.contains("@Autoserializable");
+        return text.contains("AutoSerializable") || text.contains("@AutoSerializable");
     }
 }
 
