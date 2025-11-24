@@ -24,7 +24,6 @@ public class CheckAutoserializableAction extends AnAction {
             return;
         }
 
-        Editor editor = e.getData(CommonDataKeys.EDITOR);
         PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
 
         if (psiFile == null || !(psiFile instanceof PsiJavaFile)) {
@@ -34,40 +33,53 @@ public class CheckAutoserializableAction extends AnAction {
             return;
         }
 
-        PsiJavaFile javaFile = (PsiJavaFile) psiFile;
-        List<String> autoserializableClasses = new ArrayList<>();
-        
-        // Analyze all classes in the file
-        for (PsiClass psiClass : javaFile.getClasses()) {
-            if (isAutoserializable(psiClass)) {
-                autoserializableClasses.add(psiClass.getName());
-            }
-        }
+        // Perform PSI operations in a read action to avoid index mismatch
+        com.intellij.openapi.application.ApplicationManager.getApplication().runReadAction(() -> {
+            try {
+                PsiJavaFile javaFile = (PsiJavaFile) psiFile;
+                List<String> autoserializableClasses = new ArrayList<>();
+                
+                // Analyze all classes in the file
+                for (PsiClass psiClass : javaFile.getClasses()) {
+                    if (isAutoserializable(psiClass)) {
+                        String className = psiClass.getName();
+                        if (className != null) {
+                            autoserializableClasses.add(className);
+                        }
+                    }
+                }
 
-        // Show results
-        if (autoserializableClasses.isEmpty()) {
-            showNotification(project, "✓ Analysis Complete", 
-                String.format("File <b>%s</b> does not contain any @Autoserializable classes.", 
-                    psiFile.getName()),
-                NotificationType.INFORMATION);
-        } else {
-            StringBuilder message = new StringBuilder();
-            message.append("File <b>").append(psiFile.getName()).append("</b> contains ")
-                   .append(autoserializableClasses.size()).append(" @Autoserializable class(es):<br/>");
-            
-            for (String className : autoserializableClasses) {
-                message.append("• <b>").append(className).append("</b><br/>");
+                // Show results
+                String fileName = psiFile.getName();
+                if (autoserializableClasses.isEmpty()) {
+                    showNotification(project, "✓ Analysis Complete", 
+                        String.format("File <b>%s</b> does not contain any @Autoserializable classes.", 
+                            fileName),
+                        NotificationType.INFORMATION);
+                } else {
+                    StringBuilder message = new StringBuilder();
+                    message.append("File <b>").append(fileName).append("</b> contains ")
+                           .append(autoserializableClasses.size()).append(" @Autoserializable class(es):<br/>");
+                    
+                    for (String className : autoserializableClasses) {
+                        message.append("• <b>").append(className).append("</b><br/>");
+                    }
+                    
+                    message.append("<br/>⚠️ Remember to:<br/>")
+                           .append("• Maintain backward compatibility<br/>")
+                           .append("• Update SerialVersionUID if needed<br/>")
+                           .append("• Document all changes");
+                    
+                    showNotification(project, "⚠️ Autoserializable Classes Found", 
+                        message.toString(), 
+                        NotificationType.WARNING);
+                }
+            } catch (Exception ex) {
+                showNotification(project, "❌ Error", 
+                    "An error occurred while analyzing the file: " + ex.getMessage(), 
+                    NotificationType.ERROR);
             }
-            
-            message.append("<br/>⚠️ Remember to:<br/>")
-                   .append("• Maintain backward compatibility<br/>")
-                   .append("• Update SerialVersionUID if needed<br/>")
-                   .append("• Document all changes");
-            
-            showNotification(project, "⚠️ Autoserializable Classes Found", 
-                message.toString(), 
-                NotificationType.WARNING);
-        }
+        });
     }
 
     @Override
@@ -107,8 +119,11 @@ public class CheckAutoserializableAction extends AnAction {
 
         // Check superclass recursively
         PsiClass superClass = psiClass.getSuperClass();
-        if (superClass != null && !superClass.getQualifiedName().equals("java.lang.Object")) {
-            return isAutoserializable(superClass);
+        if (superClass != null) {
+            String qualifiedName = superClass.getQualifiedName();
+            if (qualifiedName != null && !qualifiedName.equals("java.lang.Object")) {
+                return isAutoserializable(superClass);
+            }
         }
 
         return false;
