@@ -15,9 +15,9 @@ import java.util.Set;
 public class AutoserializableUtil {
     
     private static final Set<String> AUTOSERIALIZABLE_ANNOTATIONS = Set.of(
-            "Autoserializable",
-            "com.brotech.Autoserializable",
-            "com.yourcompany.Autoserializable"
+            "AutoSerializable",
+            "com.brotech.AutoSerializable",
+            "com.yourcompany.AutoSerializable"
     );
     
     private static final int MAX_SUPERCLASS_DEPTH = 10; // Prevent infinite loops
