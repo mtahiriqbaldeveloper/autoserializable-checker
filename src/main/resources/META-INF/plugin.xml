@@ -29,6 +29,9 @@
                            displayType="BALLOON"
                            isLogByDefault="true"/>
 
+        <!-- Register settings state service -->
+        <applicationService serviceImplementation="com.brotech.autoserializablechecker.core.AutoserializableSettingsState"/>
+
         <!-- Register startup activity -->
         <postStartupActivity implementation="com.brotech.autoserializablechecker.core.AutoserializableStartupActivity"/>
 
@@ -40,8 +43,10 @@
                          enabledByDefault="true"
                          level="WARNING"
                          implementationClass="com.brotech.autoserializablechecker.core.AutoserializableInspection"/>
+        
+        <!-- Register settings UI -->
         <projectConfigurable instance="com.brotech.autoserializablechecker.core.AutoserializableSettings"
-                             displayName="serialization-checker"/>
+                             displayName="Autoserializable Checker"/>
 
     </extensions>
 
